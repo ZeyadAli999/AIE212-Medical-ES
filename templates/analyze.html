@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="analyze-wrap" style="--accent: {{ accent_color }};">
+  <div class="analyze-card">
+    <div class="analyze-spinner">
+      <div class="spinner-ring"></div>
+      <div class="spinner-ring spinner-ring-2"></div>
+      <div class="spinner-ring spinner-ring-3"></div>
+      <div class="spinner-core">
+        <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+        </svg>
+      </div>
+    </div>
+    <h2 class="analyze-title">Analyzing your symptoms</h2>
+    <p class="analyze-sub">Running Forward Chaining with Lowest Index conflict resolution...</p>
+    <div class="analyze-steps">
+      <div class="a-step a-step-done">✓ Loaded {{ domain_name }} knowledge base</div>
+      <div class="a-step a-step-active">→ Matching rules against working memory</div>
+      <div class="a-step">· Computing certainty factors</div>
+      <div class="a-step">· Preparing diagnosis</div>
+    </div>
+  </div>
+</div>
+
+<script>
+  // Simulate staged progress then redirect to results
+  const steps = document.querySelectorAll('.a-step');
+  let i = 1;
+  const interval = setInterval(() => {
+    if (i < steps.length) {
+      steps[i-1].classList.remove('a-step-active');
+      steps[i-1].classList.add('a-step-done');
+      steps[i-1].textContent = '✓ ' + steps[i-1].textContent.replace('→ ', '').replace('· ', '');
+      steps[i].classList.add('a-step-active');
+      steps[i].textContent = steps[i].textContent.replace('·', '→');
+      i++;
+    }
+  }, 450);
+  setTimeout(() => {
+    clearInterval(interval);
+    window.location.href = "{{ url_for('results') }}";
+  }, 1800);
+</script>
+{% endblock %}

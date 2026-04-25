@@ -1,0 +1,61 @@
+<svg viewBox="0 0 400 440" xmlns="http://www.w3.org/2000/svg" class="anatomy-svg">
+  <defs>
+    <linearGradient id="giBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#6d28d9" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#2e1065" stop-opacity="0.55"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Body outline -->
+  <path d="M200 40 Q110 60 100 200 Q90 340 200 420 Q310 340 300 200 Q290 60 200 40 Z"
+        fill="none" stroke="#334155" stroke-width="1" opacity="0.4"/>
+
+  <!-- Esophagus -->
+  <g id="esophagus" class="anatomy-region">
+    <rect x="192" y="65" width="16" height="90" rx="4" fill="url(#giBase)" stroke="#a78bfa" stroke-width="1.8"/>
+    <line x1="195" y1="80" x2="205" y2="80" stroke="#a78bfa" stroke-width="0.8" opacity="0.7"/>
+    <line x1="195" y1="100" x2="205" y2="100" stroke="#a78bfa" stroke-width="0.8" opacity="0.7"/>
+    <line x1="195" y1="120" x2="205" y2="120" stroke="#a78bfa" stroke-width="0.8" opacity="0.7"/>
+    <line x1="195" y1="140" x2="205" y2="140" stroke="#a78bfa" stroke-width="0.8" opacity="0.7"/>
+  </g>
+
+  <!-- Stomach -->
+  <g id="stomach" class="anatomy-region">
+    <path d="M155 160 Q130 170 135 210 Q140 245 175 255 Q215 260 240 240 Q260 220 255 195 Q250 170 225 162 Q200 158 180 160 Z"
+          fill="url(#giBase)" stroke="#a78bfa" stroke-width="2"/>
+    <!-- Stomach rugae (folds) -->
+    <path d="M160 200 Q180 210 200 205 M170 220 Q190 228 210 222 M155 185 Q175 195 195 188" stroke="#7c3aed" stroke-width="0.8" fill="none" opacity="0.5"/>
+  </g>
+
+  <!-- Small intestine (coiled mass) -->
+  <g id="small-intestine" class="anatomy-region">
+    <path d="M185 260 Q140 265 135 295 Q133 320 160 322 Q200 320 215 300 Q225 285 205 275 Q185 268 170 280 Q158 292 175 305 Q200 315 225 310 Q245 305 240 285"
+          stroke="#a78bfa" stroke-width="5" fill="none" stroke-linecap="round"/>
+    <path d="M155 330 Q185 340 220 335 Q245 330 240 315"
+          stroke="#a78bfa" stroke-width="5" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Large intestine (frame around small intestine) -->
+  <g id="large-intestine" class="anatomy-region">
+    <!-- Ascending -->
+    <path d="M105 260 L105 360" stroke="#a78bfa" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- Transverse -->
+    <path d="M105 260 L290 260" stroke="#a78bfa" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- Descending -->
+    <path d="M290 260 L290 360" stroke="#a78bfa" stroke-width="8" fill="none" stroke-linecap="round"/>
+    <!-- Connectors -->
+    <path d="M105 360 L155 370" stroke="#a78bfa" stroke-width="6" fill="none" stroke-linecap="round"/>
+    <path d="M290 360 L240 370" stroke="#a78bfa" stroke-width="6" fill="none" stroke-linecap="round"/>
+  </g>
+
+  <!-- Appendix (critical for appendicitis highlighting) -->
+  <g id="appendix" class="anatomy-region">
+    <ellipse cx="118" cy="372" rx="6" ry="16" fill="url(#giBase)" stroke="#a78bfa" stroke-width="2" transform="rotate(25 118 372)"/>
+  </g>
+
+  <!-- Labels -->
+  <text x="200" y="105" text-anchor="middle" font-size="10" fill="#94a3b8" font-family="Inter, sans-serif">Esophagus</text>
+  <text x="295" y="200" font-size="11" fill="#94a3b8" font-family="Inter, sans-serif">Stomach</text>
+  <text x="300" y="300" font-size="10" fill="#94a3b8" font-family="Inter, sans-serif">Colon</text>
+  <text x="60" y="378" font-size="10" fill="#94a3b8" font-family="Inter, sans-serif">Appendix</text>
+</svg>

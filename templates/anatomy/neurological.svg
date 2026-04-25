@@ -1,0 +1,77 @@
+<svg viewBox="0 0 400 440" xmlns="http://www.w3.org/2000/svg" class="anatomy-svg">
+  <defs>
+    <linearGradient id="neuroBase" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#be185d" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#4c0519" stop-opacity="0.55"/>
+    </linearGradient>
+    <radialGradient id="brainInner" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#f472b6" stop-opacity="0.4"/>
+      <stop offset="100%" stop-color="#831843" stop-opacity="0.2"/>
+    </radialGradient>
+  </defs>
+
+  <!-- Head outline -->
+  <ellipse cx="200" cy="200" rx="150" ry="180" fill="none" stroke="#334155" stroke-width="1" opacity="0.4"/>
+
+  <!-- Meninges (outer membrane layer — highlights for meningitis) -->
+  <g id="meninges" class="anatomy-region">
+    <path d="M110 140 Q95 80 200 60 Q305 80 290 140 Q310 200 295 280 Q275 340 200 350 Q125 340 105 280 Q90 200 110 140 Z"
+          fill="none" stroke="#f472b6" stroke-width="6" opacity="0.35"/>
+  </g>
+
+  <!-- Brain outer (used for tension headache / epilepsy) -->
+  <g id="brain-outer" class="anatomy-region">
+    <path d="M120 150 Q108 88 200 72 Q292 88 280 150 Q298 200 285 270 Q268 325 200 335 Q132 325 115 270 Q102 200 120 150 Z"
+          fill="url(#brainInner)" stroke="#f472b6" stroke-width="2.5"/>
+  </g>
+
+  <!-- Central fissure dividing left / right -->
+  <path d="M200 72 Q200 200 200 335" stroke="#831843" stroke-width="2" fill="none" opacity="0.7"/>
+
+  <!-- Brain LEFT hemisphere (migraine, left-side symptoms) -->
+  <g id="brain-left" class="anatomy-region">
+    <path d="M200 72 Q108 88 120 150 Q102 200 115 270 Q132 325 200 335 L200 72 Z"
+          fill="url(#neuroBase)" opacity="0.5" stroke="none"/>
+    <!-- Gyri details -->
+    <path d="M135 110 Q155 105 175 115" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M125 145 Q150 140 175 150" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M120 185 Q145 180 175 190" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M120 225 Q145 220 175 230" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M130 265 Q155 260 180 270" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M150 300 Q170 295 185 305" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+  </g>
+
+  <!-- Brain RIGHT hemisphere (stroke default highlight) -->
+  <g id="brain-right" class="anatomy-region">
+    <path d="M200 72 Q292 88 280 150 Q298 200 285 270 Q268 325 200 335 L200 72 Z"
+          fill="url(#neuroBase)" opacity="0.5" stroke="none"/>
+    <path d="M225 110 Q245 105 265 115" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M225 145 Q250 140 275 150" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M225 185 Q255 180 280 190" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M225 225 Q255 220 280 230" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M220 265 Q245 260 270 270" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+    <path d="M215 300 Q230 295 250 305" stroke="#831843" stroke-width="1.4" fill="none" opacity="0.5"/>
+  </g>
+
+  <!-- Brain stem -->
+  <g id="brain-stem" class="anatomy-region">
+    <path d="M190 335 L190 370 Q200 380 210 370 L210 335 Z"
+          fill="url(#neuroBase)" opacity="0.7" stroke="#f472b6" stroke-width="1.5"/>
+  </g>
+
+  <!-- Inner ear (for vertigo) -->
+  <g id="inner-ear" class="anatomy-region">
+    <circle cx="110" cy="200" r="10" fill="url(#neuroBase)" stroke="#f472b6" stroke-width="1.5" opacity="0.6"/>
+    <path d="M108 194 Q115 196 113 202 Q110 206 107 202 Q104 198 108 194" fill="#f472b6" opacity="0.6"/>
+    <circle cx="290" cy="200" r="10" fill="url(#neuroBase)" stroke="#f472b6" stroke-width="1.5" opacity="0.6"/>
+    <path d="M288 194 Q295 196 293 202 Q290 206 287 202 Q284 198 288 194" fill="#f472b6" opacity="0.6"/>
+  </g>
+
+  <!-- Labels -->
+  <text x="140" y="105" font-size="10" fill="#94a3b8" font-family="Inter, sans-serif">Left</text>
+  <text x="250" y="105" font-size="10" fill="#94a3b8" font-family="Inter, sans-serif">Right</text>
+  <text x="200" y="392" text-anchor="middle" font-size="10" fill="#94a3b8" font-family="Inter, sans-serif">Brainstem</text>
+  <text x="68" y="205" font-size="9" fill="#94a3b8" font-family="Inter, sans-serif">Inner ear</text>
+  <text x="310" y="205" font-size="9" fill="#94a3b8" font-family="Inter, sans-serif">Inner ear</text>
+  <text x="200" y="55" text-anchor="middle" font-size="10" fill="#94a3b8" font-family="Inter, sans-serif">Meninges</text>
+</svg>

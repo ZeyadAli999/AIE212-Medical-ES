@@ -1,0 +1,305 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="results-wrap" style="--accent: {{ accent_color }}; --urgency: {{ urgency_style.color }};">
+
+  <!-- Urgency banner -->
+  <div class="urgency-banner urgency-{{ urgency|lower }}">
+    <div class="urgency-pulse"></div>
+    <div class="urgency-content">
+      <div class="urgency-label">{{ urgency_style.label }}</div>
+      {% if urgency in ('HIGH', 'EMERGENCY') %}
+      <div class="urgency-sub">Seek medical attention immediately.</div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Main results grid: anatomy left, diagnosis right -->
+  <div class="results-grid">
+
+    <!-- Anatomy panel -->
+    <div class="anatomy-panel">
+      <div class="panel-header">
+        <span class="panel-title">Affected Region</span>
+        <span class="panel-badge" style="background: {{ urgency_style.color }}22; color: {{ urgency_style.color }};">
+          {{ urgency }}
+        </span>
+      </div>
+
+      <div class="anatomy-canvas">
+        {% if domain_id == 'RESPIRATORY' %}
+        {% include 'anatomy/respiratory.svg' %}
+        {% elif domain_id == 'GASTROINTESTINAL' %}
+        {% include 'anatomy/gastrointestinal.svg' %}
+        {% else %}
+        {% include 'anatomy/neurological.svg' %}
+        {% endif %}
+      </div>
+
+      <!-- Color legend -->
+      <div class="legend">
+        <div class="legend-title">Severity Legend</div>
+        <div class="legend-items">
+          <div class="legend-item"><span class="legend-dot" style="background: #10b981;"></span>Mild</div>
+          <div class="legend-item"><span class="legend-dot" style="background: #f59e0b;"></span>Moderate</div>
+          <div class="legend-item"><span class="legend-dot" style="background: #ef4444;"></span>Severe</div>
+          <div class="legend-item"><span class="legend-dot" style="background: #dc2626; box-shadow: 0 0 8px #dc262688;"></span>Emergency</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Diagnosis panel -->
+    <div class="diagnosis-panel">
+      <div class="panel-header">
+        <span class="panel-title">Diagnosis</span>
+        <span class="panel-meta">{{ fired_rules_count }} rules fired · {{ trace_rows|length }} cycles</span>
+      </div>
+
+      {% if classification.scenario == 'standard_primary' %}
+      <div class="primary-diagnosis">
+        <div class="primary-label">Most likely condition</div>
+        <div class="primary-name">{{ classification.primary }}</div>
+        <div class="primary-cf-row">
+          <div class="primary-cf-bar">
+            <div class="primary-cf-fill" style="width: {{ (classification.primary_cf * 100)|int }}%; background: {{ urgency_style.color }};"></div>
+          </div>
+          <div class="primary-cf-value">
+            <span class="cf-big">{{ (classification.primary_cf * 100)|int }}%</span>
+            <span class="cf-small">confidence · CF = {{ "%.3f"|format(classification.primary_cf) }}</span>
+          </div>
+        </div>
+      </div>
+      {% elif classification.scenario in ('differential_pair', 'unranked_differential') %}
+      <div class="ambig-diagnosis">
+        <div class="ambig-label">Multiple candidates — physician review needed</div>
+        {% for d in classification.differentials %}
+        <div class="ambig-row">
+          <span class="ambig-name">{{ d[0] }}</span>
+          <div class="ambig-bar">
+            <div class="ambig-fill" style="width: {{ (d[1] * 100)|int }}%;"></div>
+          </div>
+          <span class="ambig-pct">{{ (d[1] * 100)|int }}%</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+      <div class="low-conf-diagnosis">
+        <div class="low-conf-label">Low Confidence — No Primary Committed</div>
+        <p>The system could not identify a single condition with sufficient confidence.
+           Direct physician evaluation is required.</p>
+      </div>
+      {% endif %}
+
+      <!-- Reasoning bullets -->
+      {% if reasoning %}
+      <div class="reasoning-section">
+        <div class="section-title">Why the system reached this conclusion</div>
+        {% for r in reasoning %}
+        <div class="reasoning-item">
+          <span class="reasoning-tag">{{ r.rule_id }}</span>
+          <span class="reasoning-text">{{ r.text }}</span>
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      <!-- Suggested action -->
+      {% if suggested_action %}
+      <div class="action-section">
+        <div class="action-icon">
+          <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/>
+            <polyline points="12 6 12 12 16 14"/>
+          </svg>
+        </div>
+        <div class="action-body">
+          <div class="action-title">Recommended Action</div>
+          <div class="action-text">{{ suggested_action }}</div>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+
+  <!-- Ranked differentials -->
+  <div class="ranked-panel">
+    <div class="panel-header">
+      <span class="panel-title">All Conditions · Ranked</span>
+    </div>
+    <div class="ranked-list">
+      {% for r in ranked %}
+      <div class="ranked-row {% if r.cf < 0 %}ranked-negative{% endif %}">
+        <span class="ranked-name">{{ r.name }}</span>
+        <div class="ranked-bar-wrap">
+          <div class="ranked-bar">
+            <div class="ranked-fill" style="width: {{ r.bar_pct|abs }}%;"></div>
+          </div>
+        </div>
+        <span class="ranked-cf">{{ "%+.3f"|format(r.cf) }}</span>
+        <span class="ranked-pct">{{ "%+d"|format(r.pct) }}%</span>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Missing fields warning -->
+  {% if missing_fields %}
+  <div class="warning-panel">
+    <div class="warning-icon">⚠</div>
+    <div class="warning-body">
+      <strong>{{ missing_fields|length }} mandatory field(s) were not answered.</strong>
+      <span> This may reduce diagnostic confidence. Skipped: {{ missing_fields|join(', ') }}</span>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Conflicting evidence panel -->
+  {% if conflict_panels %}
+  <div class="conflict-panel">
+    <div class="panel-header">
+      <span class="panel-title">⚠ Conflicting Evidence Detected</span>
+    </div>
+    {% for c in conflict_panels %}
+    <div class="conflict-row">
+      <div class="conflict-head">
+        For <strong>{{ c.condition }}</strong>, two rules pointed in opposite directions (Phase 3 §4.2 Type 2 conflict):
+      </div>
+      <div class="conflict-body">
+        <div class="conflict-line">Prior CF: <code>{{ "%+.3f"|format(c.prev_cf) }}</code></div>
+        <div class="conflict-line">New contribution from {{ c.rule_id }}: <code>{{ "%+.3f"|format(c.contribution) }}</code></div>
+        <div class="conflict-line conflict-formula">
+          Combined (mixed-sign formula): <code>{{ c.formula }}</code>
+        </div>
+      </div>
+    </div>
+    {% endfor %}
+  </div>
+  {% endif %}
+
+  <!-- Doctor Mode toggle -->
+  <div class="doctor-mode-wrap">
+    <button class="doctor-toggle" id="doctorToggle">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M11 3a8 8 0 018 8v9a1 1 0 01-1 1H4a1 1 0 01-1-1v-9a8 8 0 018-8z"/>
+        <circle cx="11" cy="11" r="2"/>
+      </svg>
+      <span>Doctor Mode: Show Full Technical Analysis</span>
+      <span class="toggle-arrow">▼</span>
+    </button>
+
+    <div class="doctor-panel" id="doctorPanel" hidden>
+
+      <!-- Patient facts -->
+      <div class="sub-panel">
+        <h4>Initial Working Memory (patient facts, all CF = 1.0)</h4>
+        <div class="facts-grid">
+          {% for f in patient_facts %}
+          <div class="fact-chip">
+            <span class="fact-id">{{ f.id }}</span>
+            <span class="fact-name">{{ f.name }}</span>
+            <span class="fact-val">= {{ f.value }}</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+
+      <!-- Derived facts -->
+      {% if derived_facts %}
+      <div class="sub-panel">
+        <h4>Derived Intermediate Facts</h4>
+        <div class="facts-grid">
+          {% for f in derived_facts %}
+          <div class="fact-chip fact-chip-derived">
+            <span class="fact-id">{{ f.id }}</span>
+            <span class="fact-name">{{ f.name }}</span>
+            <span class="fact-val">CF = {{ "%+.3f"|format(f.cf) }} (from {{ f.origin }})</span>
+          </div>
+          {% endfor %}
+        </div>
+      </div>
+      {% endif %}
+
+      <!-- Trace table -->
+      <div class="sub-panel">
+        <h4>Decision Trace · WM / CS / Rule / Deductions</h4>
+        <p class="sub-panel-desc">Exact format per Lecture 5. Each row = one inference cycle.</p>
+        <div class="trace-table-wrap">
+          <table class="trace-table">
+            <thead>
+              <tr>
+                <th>Cycle</th>
+                <th>WM</th>
+                <th>Conflict Set</th>
+                <th>Rule Fired</th>
+                <th>Deductions + CF Arithmetic</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for t in trace_rows %}
+              <tr {% if t.is_mixed_sign %}class="trace-row-conflict"{% endif %}>
+                <td class="tc-cycle">{{ t.cycle }}</td>
+                <td class="tc-wm">{{ t.wm }}</td>
+                <td class="tc-cs">
+                  {% for r in t.cs %}<div>{{ r }}</div>{% endfor %}
+                </td>
+                <td class="tc-rule">{{ t.rule }}</td>
+                <td class="tc-deduction">
+                  {% for line in t.deduction %}<div>{{ line }}</div>{% endfor %}
+                </td>
+              </tr>
+              {% endfor %}
+              <tr class="trace-row-end">
+                <td>END</td>
+                <td>—</td>
+                <td>(empty)</td>
+                <td>STOP</td>
+                <td>Conflict Set empty. Session complete.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Action buttons -->
+  <div class="results-actions">
+    <a href="{{ url_for('new_session') }}" class="btn-primary">Start New Assessment</a>
+    <button class="btn-secondary" onclick="window.print()">Print / Save as PDF</button>
+  </div>
+</div>
+
+<script>
+  // Doctor Mode toggle
+  const toggle = document.getElementById('doctorToggle');
+  const panel = document.getElementById('doctorPanel');
+  toggle.addEventListener('click', () => {
+    panel.hidden = !panel.hidden;
+    toggle.classList.toggle('is-open', !panel.hidden);
+  });
+
+  // Highlight the affected regions in the anatomy SVG
+  (function() {
+    {% if highlight %}
+    const regions = {{ highlight.regions|tojson }};
+    const intensity = "{{ highlight.intensity }}";
+    const colorMap = {
+      mild:     "#10b981",
+      moderate: "#f59e0b",
+      severe:   "#ef4444",
+      emergency:"#dc2626",
+    };
+    const color = colorMap[intensity] || "#ef4444";
+
+    regions.forEach(regionId => {
+      const el = document.getElementById(regionId);
+      if (el) {
+        el.classList.add('region-highlight');
+        el.style.setProperty('--region-color', color);
+      }
+    });
+    {% endif %}
+  })();
+</script>
+{% endblock %}
