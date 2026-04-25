@@ -5,13 +5,6 @@ Dr. Essam Abdellatef · Spring 2025/2026
 
 ---
 
-## Group Members
-- [Your Name] (ID: ...)
-- [Teammate 1] (ID: ...)
-- [Teammate 2] (ID: ...)
-
----
-
 ## What it is
 
 A Rule-Based Expert System with Certainty Factors for medical triage.
